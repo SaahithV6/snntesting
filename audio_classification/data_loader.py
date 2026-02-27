@@ -18,18 +18,17 @@ class SpeechCommandsDataset(Dataset):
         
         self.preprocessor = preprocessor or AudioPreprocessor()
         
-        all_labels = set()
-        for i in range(len(self.dataset)):
-            _, _, label, *_ = self.dataset[i]
-            all_labels.add(label)
-        
         if target_classes is None:
-            target_classes = sorted(list(all_labels))[:10]
-        
-        self.target_classes = target_classes
-        self.label_to_idx = {label: idx for idx, label in enumerate(target_classes)}
+            self.target_classes = ['yes', 'no', 'up', 'down', 'left', 'right', 'on', 'off', 'stop', 'go']
+        else:
+            self.target_classes = target_classes
+            
+        self.label_to_idx = {label: idx for idx, label in enumerate(self.target_classes)}
         
         self.valid_indices = []
+        for i, (path, _, label, _, _) in enumerate(self.dataset._walker):
+            if label in self.label_to_idx:
+                self.valid_indices.append(i)
         for i in range(len(self.dataset)):
             _, _, label, *_ = self.dataset[i]
             if label in self.label_to_idx:
