@@ -22,9 +22,11 @@ class AudioSNN(nn.Module):
         self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
         self.lif2 = snn.Leaky(beta=beta)
         self.pool2 = nn.AvgPool2d(2, 2)
-        
-
-        conv_out_size = 64 * (n_mels // 4) * (seq_length // 4)
+                     
+        with torch.no_grad():
+            dummy_input = torch.randn(1, 1, n_mels, seq_length)
+            dummy_out = self.pool2(self.conv2(self.pool1(self.conv1(dummy_input))))
+            conv_out_size = dummy_out.view(1, -1).size(1)
         
 
         self.fc1 = nn.Linear(conv_out_size, 256)
