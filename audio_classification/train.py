@@ -25,6 +25,7 @@ def train_epoch(model, train_loader, optimizer, loss_fn, device):
         loss = loss_fn(spk_rec, targets) 
         
         optimizer.zero_grad()
+        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
         loss.backward()
         optimizer.step()
         
