@@ -20,16 +20,12 @@ def train_epoch(model, train_loader, optimizer, loss_fn, device):
         data = data.to(device)
 
 
-        spk_rec, _ = model(data) 
-        
-        loss = loss_fn(spk_rec, targets) 
-        
-        optimizer.zero_grad()
-        nn.utils.clip_grad_norm_(model.parameters(), 1.0)
-        loss.backward()
-        optimizer.step()
-        
-        total_loss += loss.item()
+            spk_rec, _ = model(data)
+            loss = loss_fn(spk_rec, targets)
+            
+            total_loss += loss.item()
+            correct += SF.accuracy_rate(spk_rec, targets) * targets.size(0)
+            total += targets.size(0)
         
         correct += SF.accuracy_rate(spk_rec, targets) * targets.size(0)
         total += targets.size(0)
