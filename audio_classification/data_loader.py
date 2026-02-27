@@ -81,7 +81,7 @@ def get_speech_commands_loaders(batch_size=32, data_dir='./data',
         train_dataset, 
         batch_size=batch_size, 
         shuffle=True,
-        num_workers=num_workers,
+        num_workers=num_workers if num_workers > 0 else 4,
         pin_memory=True
     )
     
@@ -89,7 +89,7 @@ def get_speech_commands_loaders(batch_size=32, data_dir='./data',
         test_dataset, 
         batch_size=batch_size, 
         shuffle=False,
-        num_workers=num_workers,
+        num_workers=num_workers if num_workers > 0 else 4,
         pin_memory=True
     )
     
