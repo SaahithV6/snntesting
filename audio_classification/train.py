@@ -18,13 +18,20 @@ def train_epoch(model, train_loader, optimizer, loss_fn, device):
     
     for data, targets in tqdm(train_loader, desc="Training", leave=False):
         data = data.to(device)
-        targets = targets.to(device)
+
+
+        spk_rec, _ = model(data) 
         
-        spk_rec, mem_rec = model(data)
-        loss = loss_fn(mem_rec, targets)
+        loss = loss_fn(spk_rec, targets) 
+        
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
+        
+        total_loss += loss.item()
+        
+        correct += SF.accuracy_rate(spk_rec, targets) * targets.size(0)
+        total += targets.size(0)
         
         total_loss += loss.item()
         _, predicted = spk_rec.sum(dim=0).max(1)
