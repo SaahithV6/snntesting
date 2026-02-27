@@ -13,6 +13,8 @@ class SpeechCommandsDataset(Dataset):
             download=download,
             subset=subset
         )
+        self.valid_indices = []
+        found_labels = set()
         
         self.preprocessor = preprocessor or AudioPreprocessor()
         
