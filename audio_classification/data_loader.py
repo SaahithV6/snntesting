@@ -36,12 +36,19 @@ class SpeechCommandsDataset(Dataset):
     
     def __len__(self):
         return len(self.valid_indices)
-    
     def __getitem__(self, idx):
-
         real_idx = self.valid_indices[idx]
         waveform, sample_rate, label, *_ = self.dataset[real_idx]
+        
+        if waveform.shape[1] < 16000:
+            waveform = torch.nn.functional.pad(waveform, (0, 16000 - waveform.shape[1]))
+        elif waveform.shape[1] > 16000:
+            waveform = waveform[:, :16000]
+
         spectrogram = self.preprocessor(waveform)
+        label_idx = self.label_to_idx[label]
+        
+        return spectrogram, label_idx
         label_idx = self.label_to_idx[label]
         
         return spectrogram, label_idx
